@@ -25,6 +25,7 @@ This is the base Nerves system definition for the [Radxa Rock 5B](https://radxa.
 | WiFi                 | Yes - VintageNet                 |
 | Bluetooth            | Untested                         |
 | Audio                | HDMI/Stereo out                  |
+| Docker Compose V2   | Optional (off by default, ~59 MB) |
 
 ## Using
 
@@ -36,6 +37,19 @@ for more information.
 If you need custom modifications to this system for your device, clone this
 repository and update as described in [Making custom
 systems](https://hexdocs.pm/nerves/customizing-systems.html).
+
+### Optional: Docker Compose V2
+
+Docker Compose is **not** included by default (adds ~59 MB). To include it, set the build-time env var when building the system:
+
+```sh
+export NERVES_SYSTEM_DOCKER_COMPOSE=1
+# then build the system (e.g. mix nerves.system.shell, or mix firmware which builds the system)
+mix nerves.system.shell
+# or from your app: NERVES_SYSTEM_DOCKER_COMPOSE=1 mix firmware
+```
+
+The binary is installed at `/usr/bin/docker-compose`. `DOCKER_HOST` is set in `erlinit.config` to `unix:///run/podman/podman.sock` so Compose talks to Podman. Verify from IEx: `System.get_env("DOCKER_HOST")` and `System.cmd("/usr/bin/docker-compose", ["version"], stderr_to_stdout: true)`.
 
 ## Linux kernel configuration
 
