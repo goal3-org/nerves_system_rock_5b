@@ -109,6 +109,7 @@ defmodule NervesSystemRock5bPlus.MixProject do
       "fwup.conf",
       "LICENSES/*",
       "linux-6.1.defconfig",
+      "linux.fragment",
       "mix.exs",
       "nerves_defconfig",
       "post-build.sh",
