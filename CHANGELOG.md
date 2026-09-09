@@ -12,6 +12,31 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.7
+
+Delta firmware updates: declare a block cache so they come out small.
+
+`fwup.conf` now sets `block-cache-size-mb = 256`. NervesHub reads that key from
+the firmware's `meta.conf` and uses it as the source window it hands xdelta3
+when generating a delta. Without it xdelta3 falls back to 64 MB against a
+~240 MB rootfs, and the delta is roughly 140x larger — measured on two real
+builds differing only by a version bump: 4.40 MB at the default window versus
+0.03 MB at 256 MB, out of a 96 MB full image.
+
+The same value sizes the cache fwup uses when *applying* a delta, which is why
+it is declared by the firmware rather than chosen by the server. Both targets
+have 16 GB of RAM, so 256 MB costs nothing during an update.
+
+* Changes
+  * `nerves_system_br` 1.32.3 -> 1.34.4, which brings fwup 1.16.0 to the target
+    (`0011-fwup-bump-to-v1.16.0.patch`). `block-cache-size-mb` needs fwup
+    1.16.0 to build, and a device needs it to honour the value rather than
+    apply with fwup's fixed 8 MB cache.
+  * `require-fwup-version` deliberately left at 0.15.0. Older fwup ignores an
+    unknown key in `meta.conf`, so this firmware still applies on a device
+    running 1.13.2 — slowly, but without error. Raising the requirement would
+    refuse those devices instead.
+
 ## v0.1.6
 
 Version bump so the Nerves artifact cache stops serving a pre-0.1.5 build.
