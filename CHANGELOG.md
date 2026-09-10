@@ -12,6 +12,28 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.8
+
+Smaller delta updates, and a hardware watchdog that is actually armed.
+
+* Changes
+  * `fwup.conf` declares FAT delta sources for `Image` and the board dtb, so
+    they stop shipping whole in every delta package. Measured on two real
+    builds from the same source firmware: the delta went from **9.6 MB** to
+    **12.4 KB** against a 96.6 MB full image — almost all of that 9.6 MB was
+    unchanged kernel bytes, since only `rootfs.img` had a delta source. Needs
+    fwup >= 1.10.0 on the device for FAT deltas; v0.1.7 already brought 1.16.0.
+    The source is the *currently active* boot partition, which is always valid:
+    `complete` formats BOOT_A and each upgrade writes the other slot, so
+    `upgrade.a` only runs while B is active and vice versa. Verified applying
+    on hardware.
+  * `linux/0002-Enable-the-hardware-watchdog.patch` sets `status = "okay"` on
+    `watchdog@feaf0000`. `CONFIG_WATCHDOG` and `CONFIG_DW_WATCHDOG` were
+    already set and the node's compatible matches, but the node is disabled in
+    `rk3588s.dtsi`, so no `/dev/watchdog0` was created and `nerves_heart` ran
+    without one — logging a single line at boot and leaving a wedged BEAM with
+    nothing to reset it.
+
 ## v0.1.7
 
 Delta firmware updates: declare a block cache so they come out small.
