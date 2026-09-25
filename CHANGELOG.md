@@ -12,6 +12,16 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.7
+
+Same system as v0.1.6; only where consumers look for it changes.
+
+* `artifact_sites` now points at this fork's own GitHub releases. It still named
+  the upstream author's organisation, so a project depending on this system
+  looked for the prebuilt artifact under a repository that has no release for
+  it, got a 404, and fell back to building Buildroot from source. The fix is in
+  `mix.exs`, which is part of the artifact checksum, hence the new version.
+
 ## v0.1.6
 
 Boots from the disk it was installed on, and supports small delta updates.
