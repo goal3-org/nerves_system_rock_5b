@@ -1,0 +1,38 @@
+From 0000000000000000000000000000000000000000 Mon Sep 17 00:00:00 2001
+From: Goal3 <engineering@goal3.org>
+Date: Wed, 10 Sep 2026 08:00:00 +0200
+Subject: [PATCH] Enable the hardware watchdog on ROCK 5B
+
+rk3588s.dtsi defines the SoC's DesignWare watchdog with
+status = "disabled", and the board DTS never overrides it. The kernel
+config already has both CONFIG_WATCHDOG and CONFIG_DW_WATCHDOG, and the
+node's compatible ("snps,dw-wdt") matches that driver — so the only thing
+stopping it from probing is the disabled node. The result is no
+/dev/watchdog0 and nerves_heart degrading with a single line at boot:
+
+    nerves_heart: can't open '/dev/watchdog0'.
+    Running without kernel watchdog: No such file or directory
+
+That matters for units nobody is standing next to. nerves_heart exists so
+that a wedged BEAM — deadlock, VM hang, heart no longer being fed — gets
+the board reset by hardware. Without it a hung unit stays hung until
+someone power-cycles it on site, and nothing reports that the protection
+was never armed.
+
+Overridden here at board level rather than in rk3588s.dtsi, which is
+shared by every rk3588s board.
+---
+ arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+--- a/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-rock-5b.dts
+@@ -1254,3 +1254,7 @@
+ 		/* GPIO4_D4-D7 */
+ 		"", "", "", "";
+ };
++
++&wdt {
++	status = "okay";
++};
