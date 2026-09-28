@@ -14,24 +14,21 @@ follows:
 
 ## v0.1.9
 
-Larger A/B slots and a gzip-compressed kernel. **Changes the partition layout:
+Larger A/B slots. **Changes the partition layout:
 a device on v0.1.8 or older must be reflashed with the full image; it refuses
 this firmware as an upgrade.** (v0.1.8 is taken by a tag that never reached
 `main`.)
 
 * Partitions
   * Boot A/B: ~49 MiB -> 128 MiB each. The kernel lives here, so a kernel that
-    outgrows the slot could never be updated over the air.
+    outgrows the slot could never be updated over the air. The uncompressed
+    `Image` (~28.5 MB) filled ~59% of the old slot.
   * Rootfs A/B: 512 MiB -> 1 GiB each (~240 MB used today).
   * The fixed partitions now end at ~2.3 GiB, so the image needs a 4 GB or
     larger disk.
-* Kernel
-  * Ships `Image.gz` (`BR2_LINUX_KERNEL_IMAGEGZ=y`, ~10 MB) instead of the
-    uncompressed `Image` (~28.5 MB). The vendor U-Boot 2017.09 loads it at
-    `kernel_addr_c` and decompresses it to `kernel_addr_r` before booting.
-  * A kernel change now ships the whole ~10 MB `Image.gz` in a delta update,
-    because compressed bytes don't delta well. An unchanged kernel still
-    compresses to identical bytes and costs nothing.
+* The kernel stays an uncompressed `Image`. A gzip-compressed `Image.gz`
+  (`BR2_LINUX_KERNEL_IMAGEGZ`) was tried and does not boot: the vendor U-Boot
+  2017.09's extlinux path never starts it, with no HDMI output and no network.
 
 ## v0.1.7
 
