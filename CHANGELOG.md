@@ -12,7 +12,33 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.10
+
+A microSD always boots itself, so a broken install can be recovered from SD.
+
+* Install and recovery media get their own MBR disk signature. `complete` (what
+  `mix burn` and `fwup -t complete` write) now uses `mbr-media` with signature
+  `0x52354201` and an `extlinux.conf` whose `root=PARTUUID=52354201-02` names it
+  (`extlinux-media.conf`, generated from `extlinux.conf` by `post-createfs.sh`).
+  Before, every disk carried `0x52354200`: with a microSD in the slot and an
+  install on the NVMe, `root=PARTUUID=52354200-02` named two disks and the kernel
+  mounted whichever enumerated first. That made the SD boot the NVMe's rootfs,
+  and a broken NVMe install left the unit unbootable with the SD inserted too.
+* A new `install` task writes an internal disk with the old signature
+  `0x52354200`, which the upgrade tasks keep writing. ImpalaOS's installer uses
+  it when an image lists it (`fwup -l`) and falls back to `complete` otherwise.
+  Both tasks share one body, `fwup_include/fwup-full-install.conf`.
+* Boot order: the Armbian U-Boot 2017.09 in the bench unit's SPI flash tries
+  `mmc1 nvme0 mmc0 …`, microSD first. The image does not ship the SPI
+  bootloader, so this depends on what is flashed there; the ImpalaOS installer
+  logs the SPI `boot_targets` and warns if the NVMe comes first.
+* Caveat: an upgrade applied to a medium writes the internal signature, so that
+  medium's slot A (still naming `0x52354201`) no longer boots after a revert.
+  Media carry no NervesHub identity, so they only get upgrades by hand.
+
 ## v0.1.9
+
+Never released on its own: it ships as part of v0.1.10.
 
 Larger A/B slots. **Changes the partition layout:
 a device on v0.1.8 or older must be reflashed with the full image; it refuses
