@@ -38,6 +38,8 @@ A microSD always boots itself, so a broken install can be recovered from SD.
 
 ## v0.1.9
 
+Never released on its own: it ships as part of v0.1.10.
+
 Larger A/B slots. **Changes the partition layout:
 a device on v0.1.8 or older must be reflashed with the full image; it refuses
 this firmware as an upgrade.** (v0.1.8 is taken by a tag that never reached
