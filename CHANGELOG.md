@@ -23,8 +23,9 @@ this firmware as an upgrade.** (v0.1.8 is taken by a tag that never reached
   * Boot A/B: ~49 MiB -> 128 MiB each. The kernel lives here, so a kernel that
     outgrows the slot could never be updated over the air. The uncompressed
     `Image` (~28.5 MB) filled ~59% of the old slot.
-  * Rootfs A/B: 512 MiB -> 1 GiB each (~240 MB used today).
-  * The fixed partitions now end at ~2.3 GiB, so the image needs a 4 GB or
+  * Rootfs A/B: 512 MiB -> 2 GiB each (~306 MB used today). Like the boot
+    slots, they can only grow with a full reflash, so they are sized for years.
+  * The fixed partitions now end at ~4.3 GiB, so the image needs an 8 GB or
     larger disk.
 * The kernel stays an uncompressed `Image`. A gzip-compressed `Image.gz`
   (`BR2_LINUX_KERNEL_IMAGEGZ`) was tried and does not boot: the vendor U-Boot
