@@ -12,6 +12,55 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.10
+
+A microSD always boots itself, so a broken install can be recovered from SD.
+
+* Install and recovery media get their own MBR disk signature. `complete` (what
+  `mix burn` and `fwup -t complete` write) now uses `mbr-media` with signature
+  `0x52354201` and an `extlinux.conf` whose `root=PARTUUID=52354201-02` names it
+  (`extlinux-media.conf`, generated from `extlinux.conf` by `post-createfs.sh`).
+  Before, every disk carried `0x52354200`: with a microSD in the slot and an
+  install on the NVMe, `root=PARTUUID=52354200-02` named two disks and the kernel
+  mounted whichever enumerated first. That made the SD boot the NVMe's rootfs,
+  and a broken NVMe install left the unit unbootable with the SD inserted too.
+* A new `install` task writes an internal disk with the old signature
+  `0x52354200`, which the upgrade tasks keep writing. ImpalaOS's installer uses
+  it when an image lists it (`fwup -l`) and falls back to `complete` otherwise.
+  Both tasks share one body, `fwup_include/fwup-full-install.conf`.
+* Boot order: the Armbian U-Boot 2017.09 in the bench unit's SPI flash tries
+  `mmc1 nvme0 mmc0 …`, microSD first. The image does not ship the SPI
+  bootloader, so this depends on what is flashed there; the ImpalaOS installer
+  logs the SPI `boot_targets` and warns if the NVMe comes first.
+* Caveat: an upgrade applied to a medium writes the internal signature, so that
+  medium's slot A (still naming `0x52354201`) no longer boots after a revert.
+  Media carry no NervesHub identity, so they only get upgrades by hand.
+
+## v0.1.9
+
+Never released on its own: it ships as part of v0.1.10.
+
+Larger A/B slots. **Changes the partition layout:
+a device on v0.1.8 or older must be reflashed with the full image; it refuses
+this firmware as an upgrade.** (v0.1.8 is taken by a tag that never reached
+`main`.)
+
+* Partitions
+  * Boot A/B: ~49 MiB -> 128 MiB each. The kernel lives here, so a kernel that
+    outgrows the slot could never be updated over the air. The uncompressed
+    `Image` (~28.5 MB) filled ~59% of the old slot.
+  * Rootfs A/B: 512 MiB -> 2 GiB each (~306 MB used today). Like the boot
+    slots, they can only grow with a full reflash, so they are sized for years.
+  * The fixed partitions now end at ~4.3 GiB, so the image needs an 8 GB or
+    larger disk.
+* Upgrade tasks match the whole partition layout (boot, rootfs and APP
+  offsets), not just the running rootfs. Two layouts that differ only in rootfs
+  size put ROOTFS_A at the same offset, and a firmware built for smaller slots
+  was accepted as an upgrade, writing its ROOTFS_B into the running ROOTFS_A.
+* The kernel stays an uncompressed `Image`. A gzip-compressed `Image.gz`
+  (`BR2_LINUX_KERNEL_IMAGEGZ`) was tried and does not boot: the vendor U-Boot
+  2017.09's extlinux path never starts it, with no HDMI output and no network.
+
 ## v0.1.7
 
 Same system as v0.1.6; only where consumers look for it changes.
