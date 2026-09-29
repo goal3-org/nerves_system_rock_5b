@@ -27,6 +27,10 @@ this firmware as an upgrade.** (v0.1.8 is taken by a tag that never reached
     slots, they can only grow with a full reflash, so they are sized for years.
   * The fixed partitions now end at ~4.3 GiB, so the image needs an 8 GB or
     larger disk.
+* Upgrade tasks match the whole partition layout (boot, rootfs and APP
+  offsets), not just the running rootfs. Two layouts that differ only in rootfs
+  size put ROOTFS_A at the same offset, and a firmware built for smaller slots
+  was accepted as an upgrade, writing its ROOTFS_B into the running ROOTFS_A.
 * The kernel stays an uncompressed `Image`. A gzip-compressed `Image.gz`
   (`BR2_LINUX_KERNEL_IMAGEGZ`) was tried and does not boot: the vendor U-Boot
   2017.09's extlinux path never starts it, with no HDMI output and no network.
