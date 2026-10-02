@@ -12,6 +12,15 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## Unreleased
+
+Userspace for running ImpalaOS as the site router (rock_5b sites without a
+separate router). The kernel already had VLANs, the VLAN-aware bridge and
+nftables with NAT as modules; this adds the programs that use them.
+
+* `dnsmasq` (DHCP and DNS forwarding per network), without its TFTP server.
+* `nftables` (`nft`), for the firewall and NAT on the LTE uplink.
+
 ## v0.1.10
 
 A microSD always boots itself, so a broken install can be recovered from SD.
