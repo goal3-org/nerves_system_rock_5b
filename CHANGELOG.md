@@ -12,7 +12,7 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
-## Unreleased
+## v0.1.11
 
 Userspace for running ImpalaOS as the site router (rock_5b sites without a
 separate router). The kernel already had VLANs, the VLAN-aware bridge and
