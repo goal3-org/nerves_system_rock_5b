@@ -20,6 +20,10 @@ nftables with NAT as modules; this adds the programs that use them.
 
 * `dnsmasq` (DHCP and DNS forwarding per network), without its TFTP server.
 * `nftables` (`nft`), for the firewall and NAT on the LTE uplink.
+* `dnsmasq` with nftset support (`--nftset`), so the firewall can allow internet
+  hosts by name: dnsmasq adds the addresses it resolves to an nftables set.
+  Buildroot has no option for it, so `patches/buildroot/0001-…` adds
+  `BR2_PACKAGE_DNSMASQ_NFTSET`.
 
 ## v0.1.10
 
