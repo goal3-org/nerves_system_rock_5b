@@ -1,0 +1,39 @@
+From: ImpalaOS <noreply@goal3.org>
+Subject: [PATCH] package/dnsmasq: add nftset support
+
+dnsmasq can add the addresses of resolved domains to nftables sets
+(--nftset) when built with HAVE_NFTSET; its Makefile then links
+libnftables through pkg-config. Buildroot has no option for it.
+
+Signed-off-by: ImpalaOS <noreply@goal3.org>
+---
+diff -ru a/package/dnsmasq/Config.in b/package/dnsmasq/Config.in
+--- a/package/dnsmasq/Config.in
++++ b/package/dnsmasq/Config.in
+@@ -48,4 +48,11 @@
+ 	help
+ 	  Enable DNS query connection marking in netfilter.
+ 
++config BR2_PACKAGE_DNSMASQ_NFTSET
++	bool "nftset support"
++	depends on BR2_PACKAGE_NFTABLES
++	help
++	  Enable adding the addresses of resolved domains to
++	  nftables sets (the --nftset option).
++
+ endif
+diff -ru a/package/dnsmasq/dnsmasq.mk b/package/dnsmasq/dnsmasq.mk
+--- a/package/dnsmasq/dnsmasq.mk
++++ b/package/dnsmasq/dnsmasq.mk
+@@ -47,6 +47,11 @@
+ DNSMASQ_COPTS += -DHAVE_CONNTRACK
+ endif
+ 
++ifeq ($(BR2_PACKAGE_DNSMASQ_NFTSET),y)
++DNSMASQ_DEPENDENCIES += nftables
++DNSMASQ_COPTS += -DHAVE_NFTSET
++endif
++
+ ifeq ($(BR2_PACKAGE_DNSMASQ_LUA),y)
+ DNSMASQ_DEPENDENCIES += lua
+ DNSMASQ_COPTS += -DHAVE_LUASCRIPT
