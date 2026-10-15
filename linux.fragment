@@ -37,3 +37,9 @@ CONFIG_KEYS=y
 # If we later need bridge networking with port mapping, add:
 #   CONFIG_NETFILTER=y, CONFIG_BRIDGE=m, CONFIG_VETH=y,
 #   CONFIG_NF_NAT=m, CONFIG_NF_CONNTRACK=m, etc.
+
+# LTE uplink: Quectel EC25-EU over QMI (what the Signalytic sites run on). The
+# modem's AT/GPS serial ports (option) and the WDM control node (USB_WDM) are
+# already in the defconfig; this adds the data interface, wwan0. VintageNetQMI
+# speaks QMI to /dev/cdc-wdm0 itself (the `qmi` Elixir library), so no libqmi.
+CONFIG_USB_NET_QMI_WWAN=m

@@ -12,6 +12,16 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.12
+
+The LTE uplink of the Signalytic sites: a Quectel EC25-EU driven over QMI
+(`wwan0` + `/dev/cdc-wdm0`), as the Armbian servers they replace do.
+
+* `CONFIG_USB_NET_QMI_WWAN=m` (linux.fragment): the QMI data interface. The
+  modem's serial ports (`option`) and the WDM control node were already there.
+* No userspace: `VintageNetQMI` speaks QMI to `/dev/cdc-wdm0` itself, so
+  `libqmi` is not needed.
+
 ## v0.1.11
 
 Userspace for running ImpalaOS as the site router (rock_5b sites without a
