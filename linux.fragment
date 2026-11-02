@@ -43,3 +43,9 @@ CONFIG_KEYS=y
 # already in the defconfig; this adds the data interface, wwan0. VintageNetQMI
 # speaks QMI to /dev/cdc-wdm0 itself (the `qmi` Elixir library), so no libqmi.
 CONFIG_USB_NET_QMI_WWAN=m
+
+# exFAT, so the install and migration stick works out of the box: sticks of
+# 64 GB and more come formatted exFAT, and the migration's database dump
+# outgrows FAT32's 4 GB file limit. NLS_UTF8 is already in the defconfig.
+CONFIG_EXFAT_FS=y
+CONFIG_EXFAT_DEFAULT_IOCHARSET="utf8"

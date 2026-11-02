@@ -12,6 +12,14 @@ follows:
    releases, and Linux kernel updates. They're also made to fix bugs and add
    features to the build infrastructure.
 
+## v0.1.13
+
+exFAT, so an install or migration stick works as it comes out of the box:
+sticks of 64 GB and more are formatted exFAT, and a database dump outgrows
+FAT32's 4 GB file limit.
+
+* `CONFIG_EXFAT_FS=y`, `CONFIG_EXFAT_DEFAULT_IOCHARSET="utf8"` (linux.fragment).
+
 ## v0.1.12
 
 The LTE uplink of the Signalytic sites: a Quectel EC25-EU driven over QMI
